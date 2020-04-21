@@ -51,6 +51,7 @@ class Directory extends React.Component {
             // this.state.sections.map(({title, imageUrl, id, size, linkUrl}) => (
             //     <MenuItem key={id} title={title} imageUrl={imageUrl} size={size} linkUrl={linkUrl} />
             // ))
+            // Same as above. `...sectionProps` spreads all those values through. ES6 short-hand
             this.state.sections.map(({id, ...sectionProps}) => (
                 <MenuItem key={id} {...sectionProps} />
             ))
