@@ -1,4 +1,5 @@
 import React from 'react';
+import CollectionItem from '../../components/collection-item/collection-item.component'
 import './collection-directory.styles.scss';
 const CollectionDirectory = ({ title, items }) => {
   return (
@@ -7,8 +8,8 @@ const CollectionDirectory = ({ title, items }) => {
       <div className='preview'>
         {items
           .filter((item, index) => index < 4) // filter only 4 items from array
-          .map((item) => (
-            <div key={item.id}>{item.name}</div>
+          .map(({id, ...collectionItemProps}) => (
+            <CollectionItem key={id} {...collectionItemProps} />
           ))}
       </div>
     </div>
