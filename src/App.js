@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { auth } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 
 import './App.css';
 // Page Components
@@ -16,11 +16,11 @@ const HatsPage = () => (
 );
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
-      currentUser: null
+      currentUser: null,
     };
   }
 
@@ -29,19 +29,36 @@ class App extends React.Component {
   componentDidMount() {
     // open session listener with Firebase
     // set to unsubscribeFromAuth property to be
-    this.unsubscribeFromAuth = auth.onAuthStateChanged( user => {
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       // set our currentUser property to that of the user in firebase database
-      this.setState({ currentUser: user})
+      // this.setState({ currentUser: user})
+      if(userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
 
-      console.log(user);
-    })
+        userRef.onSnapshot(snapShot => {
+          console.log(snapShot.data());
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data(),
+            },
+          }, () => (
+            console.log(this.state)
+          ));
+          console.log(this.state);
+        });
+      }
+
+      //set user to null if logged out
+      this.setState({ currentUser: userAuth });
+    });
   }
 
   componentWillUnmount() {
     // call this method to close the `subscription` listening session with firebase auth
     this.unsubscribeFromAuth();
   }
-  
+
   render() {
     return (
       <div>
